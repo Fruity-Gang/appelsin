@@ -29,7 +29,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: ls -la
+        cache-dependency-path: skal/package-lock.json
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
