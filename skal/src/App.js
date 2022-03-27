@@ -1,59 +1,30 @@
 import "./App.css";
-import LoginForm from "./components/LoginForm";
 import { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import Preferences from "./components/Preferences";
+import Dashboard from "./components/Dashboard";
+import Login from './components/Login/Login';
 
 function App() {
-  const fruityUser = {
-    email: "1337@fruity.com",
-    password: "getfruity",
-  };
 
-  const [user, setUser] = useState({
-    email: "",
-  });
+  const [token, setToken] = useState();
 
-  const [error, setError] = useState("");
-
-  const Login = (details) => {
-    console.log(details);
-
-    if (
-      details.email === fruityUser.email &&
-      details.password === fruityUser.password
-    ) {
-      console.log("Bonjour fruity boy ");
-      setUser({
-        email: details.email,
-      });
-    } else {
-      console.log("you are not fruity :(");
-      setError("you are not fruity :(");
-    }
-  };
-
-  const Logout = () => {
-    setUser({
-      email: "",
-    });
-  };
+  if(!token) {
+    return <Login setToken={setToken} />
+  }
 
   return (
     <div className="container">
-      {user.email !== "" ? (
-        <div className="welcome">
-          <h2>
-            Welcome, <span>{user.email}</span>
-          </h2>
-          <button onClick={Logout} className="btn">
-            Logout
-          </button>
-        </div>
-      ) : (
-        <div>
-        <h3>Lets get fruity</h3>
-        <LoginForm Login={Login} error={error} />
-        </div>
-      )}
+      <h1>Fruity App</h1>
+      <BrowserRouter>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />}>
+        </Route>
+        <Route path="/preferences" element={<Preferences />}>
+        </Route>
+      </Routes>
+      </BrowserRouter>
     </div>
   );
 }
