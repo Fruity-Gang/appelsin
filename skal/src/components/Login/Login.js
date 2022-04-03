@@ -1,56 +1,80 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import { useRef, useState, useEffect } from "react";
+import useAuth from "../../hooks/useAuth";
+import "./Login.css";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
-async function loginUser(credentials) {
-  return fetch('http://localhost:8080/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(credentials)
-  })
-    .then(data => data.json())
- }
+const Login = () => {
+  const { setAuth } = useAuth();
 
-export default function Login({ setToken }) {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
-  const handleSubmit = async e => {
+  const userRef = useRef();
+  const errRef = useRef();
+
+  const [user, setUser] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    setErrMsg("");
+  }, [user, pwd]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = await loginUser({
-      email,
-      password
-    });
-    setToken(token);
-  }
+
+    setAuth({ user, pwd });
+    setUser("");
+    setPwd("");
+    navigate(from, { replace: true });
+  };
 
   return (
-    <form className="add-form" onSubmit={handleSubmit}>
-      <div className="form-control">
-        <label>Email</label>
+    <section>
+      <p
+        ref={errRef}
+        className={errMsg ? "errmsg" : "offscreen"}
+        aria-live="assertive"
+      >
+        {errMsg}
+      </p>
+      <h1>Sign In</h1>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="username">Username:</label>
         <input
-          type="email"
-          placeholder="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          id="username"
+          ref={userRef}
+          autoComplete="off"
+          onChange={(e) => setUser(e.target.value)}
+          value={user}
+          required
         />
-      </div>
-      <div className="form-control">
-        <label>Password</label>
+
+        <label htmlFor="password">Password:</label>
         <input
           type="password"
-          placeholder="******"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          id="password"
+          onChange={(e) => setPwd(e.target.value)}
+          value={pwd}
+          required
         />
-      </div>
-
-      <input type="submit" value="Login" className="btn" />
-    </form>
+        <button>Sign In</button>
+      </form>
+      <p>
+        Need an Account?
+        <br />
+        <span className="line">
+          <a href="register">Sign Up</a>
+        </span>
+      </p>
+    </section>
   );
-}
-
-Login.propTypes = {
-  setToken: PropTypes.func.isRequired,
 };
+
+export default Login;

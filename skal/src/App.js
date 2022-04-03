@@ -1,31 +1,31 @@
-import "./App.css";
-import { useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-import Preferences from "./components/Preferences";
-import Dashboard from "./components/Dashboard";
-import Login from './components/Login/Login';
+//import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import Register from "./components/register/Register";
+import Login from "./components/login/Login";
+import Layout from "./components/Layout";
+import Home from "./components/home/Home";
+import Missing from "./components/Missing";
+import RequireAuth from "./components/RequireAuth";
+import ProfilePage from "./components/profile/ProfilePage";
+import Unauthorized from "./components/Unauthorized";
 
 function App() {
-
-  const [token, setToken] = useState();
-
-  if(!token) {
-    return <Login setToken={setToken} />
-  }
-
   return (
-    <div className="container">
-      <h1>Fruity App</h1>
-      <BrowserRouter>
-      <Routes>
-        <Route path="/dashboard" element={<Dashboard />}>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/* public routes */}
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        {/* we want to protect these routes */}
+        <Route element={<RequireAuth />}>
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
-        <Route path="/preferences" element={<Preferences />}>
-        </Route>
-      </Routes>
-      </BrowserRouter>
-    </div>
+        {/* catch all */}
+        <Route path="*" element={<Missing />} />
+      </Route>
+    </Routes>
   );
 }
 
