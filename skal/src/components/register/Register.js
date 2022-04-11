@@ -1,4 +1,4 @@
-import "./Register.css";
+import "../../App.css";
 import { useRef, useState, useEffect } from "react";
 import {
   faCheck,
@@ -9,8 +9,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
+import Topbar from "../topbar/Topbar";
+import Sidebar from "../sidebar/Sidebar";
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
+const EMAIL_REGEX = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:|\\)*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:|\\)+)\])$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{3,24}$/;
 const REGISTER_URL = "/register";
 
@@ -23,6 +26,10 @@ const Register = () => {
 
   const userRef = useRef();
   const errRef = useRef();
+
+  const [email, setEmail] = useState("");
+  const [validEmail, setValidEmail] = useState(false);
+  const [emailFocus, setEmailFocus] = useState(false);
 
   const [user, setUser] = useState("");
   const [validName, setValidName] = useState(false);
@@ -47,13 +54,17 @@ const Register = () => {
   }, [user]);
 
   useEffect(() => {
+    setValidEmail(EMAIL_REGEX.test(email));
+  }, [email]);
+
+  useEffect(() => {
     setValidPwd(PWD_REGEX.test(pwd));
     setValidMatch(pwd === matchPwd);
   }, [pwd, matchPwd]);
 
   useEffect(() => {
     setErrMsg("");
-  }, [user, pwd, matchPwd]);
+  }, [email, user, pwd, matchPwd]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,10 +84,11 @@ const Register = () => {
           withCredentials: true,
         }
       );
-
+        console.log(JSON.stringify(response));
       //username=buzman69&email=buzman69%40gmail.com&passphrase=superstrongpassword
-      setAuth({ user, pwd });
+      setAuth({ email, user, pwd });
       navigate(from, { replace: true });
+      setEmail('');
       setUser("");
       setPwd("");
       setMatchPwd("");
@@ -93,6 +105,12 @@ const Register = () => {
   };
 
   return (
+    <>
+    <Topbar />
+    <div className="newContainer">
+      <Sidebar />
+      <div className="others">
+    <div className="container">
     <section>
       <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"}>
         {errMsg}
@@ -134,6 +152,31 @@ const Register = () => {
           Letters, numbers, underscores, hyphens allowed.
         </p>
 
+        <label htmlFor="email">
+          Email:
+          <FontAwesomeIcon
+            icon={faCheck}
+            className={validEmail ? "valid" : "hide"}
+          />
+          <FontAwesomeIcon
+            icon={faTimes}
+            className={validEmail || !email ? "hide" : "invalid"}
+          />
+        </label>
+        <input
+          type="email"
+          id="email"
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          required
+          onFocus={() => setEmailFocus(true)}
+          onBlur={() => setEmailFocus(false)}
+        />
+        <p className={emailFocus && !validEmail? "instructions" : "offscreen"}>
+          <FontAwesomeIcon icon={faInfoCircle} />
+          Please add a valid email address.
+        </p>
+
         <label htmlFor="password">
           Password:
           <FontAwesomeIcon
@@ -156,7 +199,7 @@ const Register = () => {
         />
         <p className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
           <FontAwesomeIcon icon={faInfoCircle} />
-          8 to 24 characters.
+          4 to 24 characters.
           <br />
           Must include uppercase and lowercase letters, a number and a special
           character.
@@ -201,6 +244,10 @@ const Register = () => {
         </span>
       </p>
     </section>
+    </div>
+    </div>
+        </div>
+        </>
   );
 };
 

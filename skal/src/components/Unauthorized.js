@@ -1,20 +1,30 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import Topbar from "./topbar/Topbar";
+import Sidebar from "./sidebar/Sidebar";
 
 const Unauthorized = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const goBack = () => navigate(-1);
+  const goBack = () => navigate(-1);
 
-    return (
-        <section>
+  return (
+    <>
+      <Topbar />
+      <div className="newContainer">
+        <Sidebar />
+        <div className="others">
+          <section>
             <h1>Unauthorized</h1>
             <br />
             <p>You need to be logged in to access this page</p>
             <div className="flexGrow">
-                <button onClick={goBack}>Go Back</button>
+              <button onClick={goBack}>Go Back</button>
             </div>
-        </section>
-    )
-}
+          </section>
+        </div>
+      </div>
+    </>
+  );
+};
 
-export default Unauthorized
+export default Unauthorized;

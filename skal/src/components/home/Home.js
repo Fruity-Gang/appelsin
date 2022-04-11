@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import "./Home.css";
+import Topbar from "../topbar/Topbar";
+import Sidebar from "../sidebar/Sidebar";
 
 const Home = () => {
     const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
-    const loggedIn = false; 
-    console.log(auth);
 
     const logout = async () => {
         setAuth({});
@@ -14,16 +15,19 @@ const Home = () => {
     }
 
     return (
-        <section>
-            <>
+        <>
+        <Topbar />
+        <div className="newContainer">
+            <Sidebar />
+            <div className="others">
             {auth.user ? (
                 <h1>Looking fruity there {auth.user}</h1> ) : (
             <h1>Not logged in</h1>
             )}
-            </>
-            <br />
+            {/* <br />
             <h2>Public</h2>
-            <Link to="/login">Login</Link>
+            <Link className="link" to="/login">Login</Link>
+            <br />
             <Link to="/register">Register</Link>
             <br />
             <h2>Private</h2>
@@ -36,8 +40,10 @@ const Home = () => {
             ) : (
                 null
             )}
-            </>
-        </section>
+            </> */}
+        </div>
+        </div>
+        </>
     )
 }
 
