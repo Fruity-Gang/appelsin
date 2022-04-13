@@ -78,15 +78,15 @@ const Register = () => {
     try {
       const response = await axios.post(
         REGISTER_URL,
-        JSON.stringify({ user, pwd }),
+        JSON.stringify({email: email, username: user, passphrase: pwd }),
         {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          withCredentials: true,
+          //withCredentials: true,
         }
       );
         console.log(JSON.stringify(response));
       //username=buzman69&email=buzman69%40gmail.com&passphrase=superstrongpassword
-      setAuth({ email, user, pwd });
+      setAuth({ user, pwd });
       navigate(from, { replace: true });
       setEmail('');
       setUser("");
